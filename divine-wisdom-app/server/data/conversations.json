@@ -178,5 +178,167 @@
     "created_at": "2025-04-15T12:49:13.575Z",
     "last_message_at": "2025-04-15T12:49:13.575Z",
     "questions_asked": 0
+  },
+  {
+    "id": "ba2f108d-b72f-49c5-8462-3fb2617761ad",
+    "user_id": "c07b2fb5-c6c8-434c-8dd5-a4d9780f94a7",
+    "session_id": "312268a3-7290-418c-b679-b8d4173acadd",
+    "language": "english",
+    "created_at": "2025-04-16T04:54:01.401Z",
+    "last_message_at": "2025-04-16T04:54:01.401Z",
+    "questions_asked": 0
+  },
+  {
+    "id": "095659f3-8aab-4a08-aeda-3c0728751097",
+    "user_id": "c07b2fb5-c6c8-434c-8dd5-a4d9780f94a7",
+    "session_id": "312268a3-7290-418c-b679-b8d4173acadd",
+    "language": "english",
+    "created_at": "2025-04-16T04:54:03.449Z",
+    "last_message_at": "2025-04-16T04:54:03.719Z",
+    "questions_asked": 1
+  },
+  {
+    "id": "140873a4-9178-45e8-ba63-493d7bb3ba7b",
+    "user_id": "c07b2fb5-c6c8-434c-8dd5-a4d9780f94a7",
+    "session_id": "312268a3-7290-418c-b679-b8d4173acadd",
+    "language": "english",
+    "created_at": "2025-04-16T04:54:19.462Z",
+    "last_message_at": "2025-04-16T04:54:19.462Z",
+    "questions_asked": 0
+  },
+  {
+    "id": "e2bc2aca-ee7a-4e2a-b841-1e16d57ef668",
+    "user_id": "c07b2fb5-c6c8-434c-8dd5-a4d9780f94a7",
+    "session_id": "312268a3-7290-418c-b679-b8d4173acadd",
+    "language": "english",
+    "created_at": "2025-04-16T04:54:21.409Z",
+    "last_message_at": "2025-04-16T04:54:21.409Z",
+    "questions_asked": 0
+  },
+  {
+    "id": "35c649a2-2d2f-463c-a5d6-def599ebd448",
+    "user_id": "c07b2fb5-c6c8-434c-8dd5-a4d9780f94a7",
+    "session_id": "aa795ffa-6557-47bd-9d83-15c4a39d16ae",
+    "language": "english",
+    "created_at": "2025-04-16T05:02:40.500Z",
+    "last_message_at": "2025-04-16T05:02:40.500Z",
+    "questions_asked": 0
+  },
+  {
+    "id": "e50e4660-3b27-453f-8aeb-648675643572",
+    "user_id": "c07b2fb5-c6c8-434c-8dd5-a4d9780f94a7",
+    "session_id": "aa795ffa-6557-47bd-9d83-15c4a39d16ae",
+    "language": "english",
+    "created_at": "2025-04-16T05:02:42.488Z",
+    "last_message_at": "2025-04-16T05:02:42.488Z",
+    "questions_asked": 0
+  },
+  {
+    "id": "4d0ac19d-c768-4785-8a38-c79da914766e",
+    "user_id": "c07b2fb5-c6c8-434c-8dd5-a4d9780f94a7",
+    "session_id": "aa795ffa-6557-47bd-9d83-15c4a39d16ae",
+    "language": "english",
+    "created_at": "2025-04-16T05:03:00.573Z",
+    "last_message_at": "2025-04-16T05:03:00.573Z",
+    "questions_asked": 0
+  },
+  {
+    "id": "b9533330-ac5f-4f12-a78f-f594784e33a4",
+    "user_id": "c07b2fb5-c6c8-434c-8dd5-a4d9780f94a7",
+    "session_id": "aa795ffa-6557-47bd-9d83-15c4a39d16ae",
+    "language": "english",
+    "created_at": "2025-04-16T05:03:02.535Z",
+    "last_message_at": "2025-04-16T05:03:02.535Z",
+    "questions_asked": 0
+  },
+  {
+    "id": "14a0899b-f696-49d6-af49-b86427f8ca0d",
+    "user_id": "c07b2fb5-c6c8-434c-8dd5-a4d9780f94a7",
+    "session_id": "b3b01a99-657b-45e9-9910-3e3490aae05e",
+    "language": "english",
+    "created_at": "2025-04-16T05:08:52.609Z",
+    "last_message_at": "2025-04-16T05:08:52.609Z",
+    "questions_asked": 0
+  },
+  {
+    "id": "b87b78b0-81e5-4c28-856b-c8bde9d8dde2",
+    "user_id": "c07b2fb5-c6c8-434c-8dd5-a4d9780f94a7",
+    "session_id": "b3b01a99-657b-45e9-9910-3e3490aae05e",
+    "language": "english",
+    "created_at": "2025-04-16T05:08:55.716Z",
+    "last_message_at": "2025-04-16T05:08:55.716Z",
+    "questions_asked": 0
+  },
+  {
+    "id": "b337fdb3-c249-4e68-bfce-6ddff7de958e",
+    "user_id": "c07b2fb5-c6c8-434c-8dd5-a4d9780f94a7",
+    "session_id": "b3b01a99-657b-45e9-9910-3e3490aae05e",
+    "language": "english",
+    "created_at": "2025-04-16T05:09:32.552Z",
+    "last_message_at": "2025-04-16T05:09:32.552Z",
+    "questions_asked": 0
+  },
+  {
+    "id": "9fa34074-de34-4b0f-acfc-dde614b035f2",
+    "user_id": "c07b2fb5-c6c8-434c-8dd5-a4d9780f94a7",
+    "session_id": "b3b01a99-657b-45e9-9910-3e3490aae05e",
+    "language": "english",
+    "created_at": "2025-04-16T05:09:35.139Z",
+    "last_message_at": "2025-04-16T05:09:35.139Z",
+    "questions_asked": 0
+  },
+  {
+    "id": "c0c4de91-4ff1-4c77-8e5b-132098ce7d16",
+    "user_id": "c07b2fb5-c6c8-434c-8dd5-a4d9780f94a7",
+    "session_id": "9e7f6487-fc07-430d-8139-d130eff2bc25",
+    "language": "english",
+    "created_at": "2025-04-16T05:11:08.001Z",
+    "last_message_at": "2025-04-16T05:11:08.001Z",
+    "questions_asked": 0
+  },
+  {
+    "id": "b10b2a16-17c0-4a25-bbe0-92753bf64876",
+    "user_id": "c07b2fb5-c6c8-434c-8dd5-a4d9780f94a7",
+    "session_id": "9e7f6487-fc07-430d-8139-d130eff2bc25",
+    "language": "english",
+    "created_at": "2025-04-16T05:11:09.795Z",
+    "last_message_at": "2025-04-16T05:11:09.795Z",
+    "questions_asked": 0
+  },
+  {
+    "id": "4d2142d5-52ed-43de-9452-72f2936ae159",
+    "user_id": "c07b2fb5-c6c8-434c-8dd5-a4d9780f94a7",
+    "session_id": "d3b1853c-4ed5-4638-af3f-5381851c970d",
+    "language": "english",
+    "created_at": "2025-04-16T05:30:23.974Z",
+    "last_message_at": "2025-04-16T05:30:23.974Z",
+    "questions_asked": 0
+  },
+  {
+    "id": "9456851d-4922-44df-a58c-fe173a22c9aa",
+    "user_id": "c07b2fb5-c6c8-434c-8dd5-a4d9780f94a7",
+    "session_id": "d3b1853c-4ed5-4638-af3f-5381851c970d",
+    "language": "english",
+    "created_at": "2025-04-16T05:30:27.962Z",
+    "last_message_at": "2025-04-16T05:30:27.962Z",
+    "questions_asked": 0
+  },
+  {
+    "id": "688c519b-901d-4be2-9681-00bf0952166e",
+    "user_id": "c07b2fb5-c6c8-434c-8dd5-a4d9780f94a7",
+    "session_id": "e6df122c-08a3-4a86-8043-07a535afc8a7",
+    "language": "english",
+    "created_at": "2025-04-16T07:46:27.360Z",
+    "last_message_at": "2025-04-16T07:46:27.360Z",
+    "questions_asked": 0
+  },
+  {
+    "id": "517de5c7-adb2-4715-b653-8334f1369b24",
+    "user_id": "c07b2fb5-c6c8-434c-8dd5-a4d9780f94a7",
+    "session_id": "e6df122c-08a3-4a86-8043-07a535afc8a7",
+    "language": "english",
+    "created_at": "2025-04-16T07:46:29.364Z",
+    "last_message_at": "2025-04-16T07:46:29.364Z",
+    "questions_asked": 0
   }
 ]

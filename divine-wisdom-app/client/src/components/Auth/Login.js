@@ -1,232 +1,123 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import styled from 'styled-components';
-import { signIn, signUp } from '../../supabase';
+import React from 'react';
+import styled, { keyframes } from 'styled-components';
+import AuthForm from './AuthForm';
+
+const floatAnimation = keyframes`
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+`;
+
+const shimmer = keyframes`
+  0% { background-position: -100% 0; }
+  100% { background-position: 200% 0; }
+`;
+
+const AuthPageContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 70% 30%, 
+                              rgba(255, 193, 7, 0.15) 0%, 
+                              rgba(74, 20, 140, 0.05) 70%);
+    z-index: -1;
+  }
+`;
 
 const AuthContainer = styled.div`
   max-width: 500px;
-  margin: 60px auto;
+  width: 100%;
+  margin: 20px auto;
   padding: 40px;
-  background-color: rgba(255, 255, 255, 0.9);
-  border-radius: 15px;
-  box-shadow: 0 5px 30px rgba(0, 0, 0, 0.1);
-`;
-
-const Tabs = styled.div`
-  display: flex;
-  margin-bottom: 30px;
-  border-bottom: 2px solid #f0f0f0;
-`;
-
-const Tab = styled.div`
-  flex: 1;
-  text-align: center;
-  padding: 15px 0;
-  cursor: pointer;
-  font-weight: 600;
-  transition: all 0.3s ease;
-  color: ${props => props.active ? '#2C5F2D' : '#666'};
-  border-bottom: 3px solid ${props => props.active ? '#2C5F2D' : 'transparent'};
-
-  &:hover {
-    color: #2C5F2D;
+  background-color: ${({ theme }) => theme.colors.cardBg};
+  border-radius: ${({ theme }) => theme.borderRadius.large};
+  box-shadow: ${({ theme }) => theme.shadows.divine};
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: linear-gradient(90deg, 
+                ${({ theme }) => theme.colors.krishnaBlue}, 
+                ${({ theme }) => theme.colors.peacockFeather}, 
+                ${({ theme }) => theme.colors.gold}, 
+                ${({ theme }) => theme.colors.peacockFeather}, 
+                ${({ theme }) => theme.colors.krishnaBlue});
+    background-size: 200% 100%;
+    animation: ${shimmer} 4s linear infinite;
   }
 `;
 
-const Form = styled.form`
+const KrishnaImageContainer = styled.div`
+  width: 150px;
+  height: 150px;
+  margin: 0 auto 30px;
+  position: relative;
+  animation: ${floatAnimation} 5s ease-in-out infinite;
+`;
+
+const KrishnaSymbol = styled.div`
+  width: 100%;
+  height: 100%;
+  background: ${({ theme }) => theme.colors.krishnaGradient};
+  border-radius: 50%;
   display: flex;
-  flex-direction: column;
-  gap: 20px;
-`;
-
-const FormGroup = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-`;
-
-const Label = styled.label`
-  font-size: 14px;
-  color: #444;
-  font-weight: 500;
-`;
-
-const Input = styled.input`
-  padding: 15px;
-  border-radius: 8px;
-  border: 1px solid #ddd;
-  font-size: 16px;
-  transition: border 0.3s ease;
-
-  &:focus {
-    outline: none;
-    border-color: #2C5F2D;
-    box-shadow: 0 0 0 2px rgba(44, 95, 45, 0.1);
-  }
-`;
-
-const Button = styled.button`
-  background-color: #2C5F2D;
+  align-items: center;
+  justify-content: center;
   color: white;
-  border: none;
-  border-radius: 8px;
-  padding: 15px;
+  font-size: 80px;
+  box-shadow: ${({ theme }) => theme.shadows.divine};
+`;
+
+const Title = styled.h2`
+  text-align: center;
+  margin-bottom: 15px;
+  color: ${({ theme }) => theme.colors.krishnaBlue};
+  font-family: ${({ theme }) => theme.fonts.heading};
+  font-size: 2.2rem;
+  letter-spacing: 1px;
+`;
+
+const Subtitle = styled.p`
+  text-align: center;
+  margin-bottom: 30px;
+  color: ${({ theme }) => theme.colors.textSecondary};
   font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-
-  &:hover {
-    background-color: #234824;
-    transform: translateY(-2px);
-  }
-
-  &:disabled {
-    background-color: #cccccc;
-    cursor: not-allowed;
-    transform: none;
-  }
-`;
-
-const ErrorMessage = styled.div`
-  color: #d32f2f;
-  font-size: 14px;
-  margin-top: 10px;
-  padding: 10px;
-  background-color: rgba(211, 47, 47, 0.1);
-  border-radius: 5px;
-  text-align: center;
-`;
-
-const InfoText = styled.p`
-  text-align: center;
-  color: #666;
-  font-size: 14px;
-  margin-top: 20px;
+  font-style: italic;
 `;
 
 const Login = () => {
-  const [activeTab, setActiveTab] = useState('login');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [name, setName] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const navigate = useNavigate();
-
-  const handleTabChange = (tab) => {
-    setActiveTab(tab);
-    setError(null);
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError(null);
-    setLoading(true);
-
-    try {
-      if (activeTab === 'login') {
-        const { data, error } = await signIn(email, password);
-        if (error) throw error;
-        console.log('User logged in:', data);
-        navigate('/chat');
-      } else {
-        // Registration
-        if (!name) {
-          setError('Please provide your name');
-          setLoading(false);
-          return;
-        }
-        
-        const { data, error } = await signUp(email, password, name);
-        if (error) throw error;
-        console.log('User signed up:', data);
-        
-        // If using email confirmation, show message
-        if (!data.session) {
-          setError('Please check your email for verification link');
-        } else {
-          navigate('/chat');
-        }
-      }
-    } catch (error) {
-      console.error('Authentication error:', error);
-      setError(error.message || 'An error occurred during authentication');
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
-    <AuthContainer>
-      <Tabs>
-        <Tab 
-          active={activeTab === 'login'} 
-          onClick={() => handleTabChange('login')}
-        >
-          Login
-        </Tab>
-        <Tab 
-          active={activeTab === 'register'} 
-          onClick={() => handleTabChange('register')}
-        >
-          Register
-        </Tab>
-      </Tabs>
-
-      <Form onSubmit={handleSubmit}>
-        {activeTab === 'register' && (
-          <FormGroup>
-            <Label htmlFor="name">Full Name</Label>
-            <Input
-              id="name"
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Enter your full name"
-              required={activeTab === 'register'}
-            />
-          </FormGroup>
-        )}
-
-        <FormGroup>
-          <Label htmlFor="email">Email Address</Label>
-          <Input
-            id="email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Enter your email"
-            required
-          />
-        </FormGroup>
-
-        <FormGroup>
-          <Label htmlFor="password">Password</Label>
-          <Input
-            id="password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Enter your password"
-            required
-            minLength={6}
-          />
-        </FormGroup>
-
-        <Button type="submit" disabled={loading}>
-          {loading ? 'Please wait...' : activeTab === 'login' ? 'Login' : 'Register'}
-        </Button>
-
-        {error && <ErrorMessage>{error}</ErrorMessage>}
-      </Form>
-
-      <InfoText>
-        {activeTab === 'login' 
-          ? "Don't have an account? Click Register above." 
-          : "Already have an account? Click Login above."}
-      </InfoText>
-    </AuthContainer>
+    <AuthPageContainer>
+      <KrishnaImageContainer>
+        <KrishnaSymbol>
+          <i className="fas fa-om"></i>
+        </KrishnaSymbol>
+      </KrishnaImageContainer>
+      
+      <AuthContainer>
+        <Title>Divine Connection</Title>
+        <Subtitle>Seek Krishna's guidance on your spiritual path</Subtitle>
+        <AuthForm />
+      </AuthContainer>
+    </AuthPageContainer>
   );
 };
 

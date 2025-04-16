@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import fluteImage from '../assets/krishna-flute.png';
 
 const HomeContainer = styled.div`
   flex: 1;
@@ -10,6 +11,30 @@ const HomeContainer = styled.div`
   text-align: center;
   padding: 60px 20px;
   background: linear-gradient(135deg, #e8f4e5 0%, #f5f7fa 100%);
+  position: relative;
+  overflow: hidden;
+`;
+
+const FluteDecoration = styled.div`
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 800px;
+  height: 120px;
+  background-image: url(${fluteImage});
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  opacity: 0.9;
+  pointer-events: none;
+`;
+
+const ContentWrapper = styled.div`
+  margin-top: 100px;
+  width: 100%;
+  z-index: 1;
 `;
 
 const HeroSection = styled.section`
@@ -22,6 +47,7 @@ const Title = styled.h1`
   margin-bottom: 20px;
   color: #2C5F2D;
   line-height: 1.2;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
   
   @media (max-width: 768px) {
     font-size: 2.5rem;
@@ -33,6 +59,9 @@ const Subtitle = styled.p`
   color: #444;
   margin-bottom: 40px;
   line-height: 1.6;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
 `;
 
 const InputContainer = styled.form`
@@ -210,74 +239,71 @@ const Home = () => {
     e.preventDefault();
     if (input.trim() === '') return;
     
-    // Store the question in localStorage
     localStorage.setItem('initialQuestion', input);
-    
-    // Navigate to chat page
     navigate('/chat');
   };
 
   return (
     <HomeContainer>
-      <HeroSection>
-        <Title>Krishna's Divine Guidance</Title>
-        <Subtitle>
-          Connect with the timeless wisdom of Lord Krishna and receive spiritual guidance
-          for your life's journey. Experience the divine grace through a personal conversation.
-        </Subtitle>
+      <FluteDecoration />
+      <ContentWrapper>
+        <HeroSection>
+          <Title>Krishna's Divine Guidance</Title>
+          <Subtitle>
+            Connect with the timeless wisdom of Lord Krishna and receive spiritual guidance
+            for your life's journey. Experience the divine grace through a personal conversation.
+          </Subtitle>
+          
+          <InputContainer onSubmit={handleSubmit}>
+            <MessageInput
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Ask Krishna a question..."
+            />
+            <SendButton type="submit" disabled={input.trim() === ''}>
+              ➤
+            </SendButton>
+          </InputContainer>
+          
+          <OrDivider>
+            <span>OR</span>
+          </OrDivider>
+          
+          <CTAButton to="/chat">Begin Your Spiritual Journey</CTAButton>
+        </HeroSection>
         
-        <InputContainer onSubmit={handleSubmit}>
-          <MessageInput
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="Ask Krishna a question..."
-          />
-          <SendButton type="submit" disabled={input.trim() === ''}>
-            ➤
-          </SendButton>
-        </InputContainer>
+        <Quote>
+          <QuoteText>
+            "Whenever dharma declines and the purpose of life is forgotten, I manifest myself on earth. 
+            I am born in every age to protect the good, to destroy evil, and to reestablish dharma."
+          </QuoteText>
+          <QuoteSource>- Bhagavad Gita 4.7-4.8</QuoteSource>
+        </Quote>
         
-        <OrDivider>
-          <span>OR</span>
-        </OrDivider>
-        
-        <CTAButton to="/chat">Begin Your Spiritual Journey</CTAButton>
-      </HeroSection>
-      
-      <Quote>
-        <QuoteText>
-          "Whenever dharma declines and the purpose of life is forgotten, I manifest myself on earth. 
-          I am born in every age to protect the good, to destroy evil, and to reestablish dharma."
-        </QuoteText>
-        <QuoteSource>Bhagavad Gita 4:7-8</QuoteSource>
-      </Quote>
-      
-      <FeaturesSection>
-        <FeatureCard>
-          <FeatureTitle>Divine Guidance</FeatureTitle>
-          <FeatureDescription>
-            Receive wisdom and guidance directly inspired by Lord Krishna's teachings, 
-            helping you navigate life's complexities with divine perspective.
-          </FeatureDescription>
-        </FeatureCard>
-        
-        <FeatureCard>
-          <FeatureTitle>Spiritual Connection</FeatureTitle>
-          <FeatureDescription>
-            Experience a deeper connection to Krishna's divine energy through 
-            conversation, meditation guidance, and spiritual practices.
-          </FeatureDescription>
-        </FeatureCard>
-        
-        <FeatureCard>
-          <FeatureTitle>Life's Wisdom</FeatureTitle>
-          <FeatureDescription>
-            Discover practical wisdom from the Bhagavad Gita that you can apply to your daily life,
-            relationships, decisions, and spiritual growth.
-          </FeatureDescription>
-        </FeatureCard>
-      </FeaturesSection>
+        <FeaturesSection>
+          <FeatureCard>
+            <FeatureTitle>Divine Wisdom</FeatureTitle>
+            <FeatureDescription>
+              Receive guidance based on the eternal teachings of the Bhagavad Gita and Lord Krishna's wisdom.
+            </FeatureDescription>
+          </FeatureCard>
+          
+          <FeatureCard>
+            <FeatureTitle>Personal Connection</FeatureTitle>
+            <FeatureDescription>
+              Experience a one-on-one conversation with divine consciousness through Krishna's teachings.
+            </FeatureDescription>
+          </FeatureCard>
+          
+          <FeatureCard>
+            <FeatureTitle>Spiritual Growth</FeatureTitle>
+            <FeatureDescription>
+              Find answers to life's deepest questions and embark on a journey of self-discovery.
+            </FeatureDescription>
+          </FeatureCard>
+        </FeaturesSection>
+      </ContentWrapper>
     </HomeContainer>
   );
 };

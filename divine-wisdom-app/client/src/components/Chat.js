@@ -9,10 +9,12 @@ const ChatContainer = styled.div`
   flex: 1;
   max-width: 900px;
   margin: 0 auto;
-  padding: 40px 20px;
+  padding: 20px;
   display: flex;
   flex-direction: column;
-  height: 100%;
+  height: calc(100vh - 90px);
+  align-items: center;
+  justify-content: center;
 `;
 
 const TopBar = styled.div`
@@ -23,7 +25,7 @@ const TopBar = styled.div`
 `;
 
 const DonateButton = styled.button`
-  background-color: #FF8C00; /* Orange color for visibility */
+  background-color: #a239ca;
   color: white;
   border: none;
   border-radius: 20px;
@@ -38,7 +40,7 @@ const DonateButton = styled.button`
   transition: all 0.2s ease;
   
   &:hover {
-    background-color: #e07800;
+    background-color: #8e33b5;
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
   }
@@ -51,41 +53,48 @@ const DonateButton = styled.button`
 
 const ChatHeader = styled.div`
   text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
 `;
 
 const ChatTitle = styled.h1`
   font-size: 2.2rem;
-  color: #2C5F2D;
+  background: linear-gradient(90deg, #fff, #a239ca);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
   margin-bottom: 10px;
 `;
 
 const ChatSubtitle = styled.p`
   font-size: 1.1rem;
-  color: #555;
+  color: rgba(255, 255, 255, 0.8);
 `;
 
 const QuestionCounter = styled.div`
   font-size: 1rem;
-  color: #2C5F2D;
+  color: #fff;
   font-weight: 500;
   text-align: center;
   margin-bottom: 20px;
   padding: 8px 15px;
-  background-color: rgba(230, 245, 230, 0.7);
+  background-color: rgba(94, 26, 135, 0.3);
   border-radius: 20px;
   display: inline-block;
+  backdrop-filter: blur(5px);
 `;
 
 const MessagesContainer = styled.div`
   flex: 1;
   overflow-y: auto;
   margin-bottom: 20px;
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.7);
+  border-radius: 15px;
+  background: rgba(15, 5, 36, 0.4);
+  backdrop-filter: blur(10px);
   padding: 20px;
-  height: 400px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  width: 100%;
+  max-height: 60vh;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
 `;
 
 const MessageBubble = styled.div`
@@ -96,40 +105,49 @@ const MessageBubble = styled.div`
   line-height: 1.5;
   font-size: 1rem;
   position: relative;
+  animation: fadeIn 0.3s ease-out;
+  
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
   
   ${({ isUser }) => isUser ? `
-    background-color: #2C5F2D;
+    background: linear-gradient(135deg, #5e1a87, #a239ca);
     color: white;
     align-self: flex-end;
     margin-left: auto;
     border-bottom-right-radius: 5px;
+    box-shadow: 0 3px 10px rgba(94, 26, 135, 0.3);
   ` : `
-    background-color: #e8f4e5;
+    background: rgba(255, 255, 255, 0.9);
     color: #333;
     align-self: flex-start;
     border-bottom-left-radius: 5px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
   `}
 `;
 
 const GitaQuote = styled.div`
   font-style: italic;
   font-size: 0.9rem;
-  border-top: 1px solid rgba(44, 95, 45, 0.3);
+  border-top: 1px solid rgba(94, 26, 135, 0.3);
   margin-top: 10px;
   padding-top: 8px;
-  color: #2C5F2D;
+  color: #a239ca;
 `;
 
 const SystemMessage = styled.div`
   text-align: center;
   margin: 20px 0;
   font-style: italic;
-  color: #666;
+  color: rgba(255, 255, 255, 0.7);
 `;
 
 const InputContainer = styled.form`
   display: flex;
   gap: 10px;
+  width: 100%;
 `;
 
 const MessageInput = styled.input`
@@ -137,19 +155,20 @@ const MessageInput = styled.input`
   padding: 15px 20px;
   border-radius: 30px;
   border: none;
-  background: white;
+  background: rgba(255, 255, 255, 0.9);
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   font-size: 1rem;
   outline: none;
-  transition: box-shadow 0.3s ease;
+  transition: all 0.3s ease;
   
   &:focus {
-    box-shadow: 0 2px 20px rgba(44, 95, 45, 0.2);
+    box-shadow: 0 2px 20px rgba(94, 26, 135, 0.4);
+    transform: translateY(-2px);
   }
 `;
 
 const SendButton = styled.button`
-  background-color: #2C5F2D;
+  background: linear-gradient(135deg, #5e1a87, #a239ca);
   color: white;
   border: none;
   border-radius: 50%;
@@ -160,15 +179,15 @@ const SendButton = styled.button`
   justify-content: center;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 2px 10px rgba(44, 95, 45, 0.3);
+  box-shadow: 0 2px 10px rgba(94, 26, 135, 0.5);
   
   &:hover {
-    background-color: #4b9e4c;
-    transform: scale(1.05);
+    transform: scale(1.05) rotate(5deg);
+    box-shadow: 0 4px 15px rgba(94, 26, 135, 0.6);
   }
   
   &:disabled {
-    background-color: #ccc;
+    background: rgba(150, 150, 150, 0.5);
     cursor: not-allowed;
     transform: none;
   }
@@ -176,8 +195,8 @@ const SendButton = styled.button`
 
 const SaveChatButton = styled.button`
   background-color: transparent;
-  color: #2C5F2D;
-  border: 1px solid #2C5F2D;
+  color: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.5);
   border-radius: 20px;
   padding: 8px 16px;
   margin-top: 10px;
@@ -189,7 +208,8 @@ const SaveChatButton = styled.button`
   font-size: 0.9rem;
   
   &:hover {
-    background-color: rgba(44, 95, 45, 0.1);
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.8);
   }
   
   &:disabled {
@@ -199,13 +219,14 @@ const SaveChatButton = styled.button`
 `;
 
 const SavedConfirmation = styled.div`
-  background-color: #e8f4e5;
-  color: #2C5F2D;
+  background-color: rgba(94, 26, 135, 0.2);
+  color: white;
   padding: 10px;
   border-radius: 5px;
   margin-top: 10px;
   text-align: center;
   animation: fadeOut 3s forwards;
+  backdrop-filter: blur(5px);
   
   @keyframes fadeOut {
     0% { opacity: 1; }
@@ -217,32 +238,31 @@ const SavedConfirmation = styled.div`
 const LanguageInfo = styled.div`
   margin-top: 10px;
   font-size: 0.9rem;
-  color: #666;
+  color: rgba(255, 255, 255, 0.7);
   text-align: center;
   font-style: italic;
 `;
 
 const SpiritualReminderMessage = styled.div`
   text-align: center;
-  margin: 15px 0;
+  margin: 15px auto;
   padding: 10px 15px;
-  background-color: rgba(44, 95, 45, 0.08);
+  background: rgba(94, 26, 135, 0.2);
+  backdrop-filter: blur(5px);
   border-radius: 10px;
   font-style: italic;
-  color: #2C5F2D;
+  color: white;
   font-size: 0.9rem;
   max-width: 90%;
-  margin-left: auto;
-  margin-right: auto;
-  border-left: 3px solid #2C5F2D;
+  border-left: 3px solid #a239ca;
 `;
 
 const LikeButton = styled.button`
   position: absolute;
   right: 10px;
   bottom: -15px;
-  background-color: white;
-  border: 1px solid #e0e0e0;
+  background: linear-gradient(135deg, #5e1a87, #a239ca);
+  border: none;
   border-radius: 50%;
   width: 30px;
   height: 30px;
@@ -251,21 +271,15 @@ const LikeButton = styled.button`
   justify-content: center;
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  color: white;
   
   &:hover {
     transform: scale(1.1);
-    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
   }
   
-  &:disabled {
-    opacity: 1;
-    cursor: default;
-    transform: none;
-  }
-  
-  &.liked {
-    background-color: #ffebee;
+  svg {
+    width: 16px;
+    height: 16px;
   }
 `;
 

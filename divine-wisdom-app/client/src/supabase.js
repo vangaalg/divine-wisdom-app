@@ -15,6 +15,16 @@ export const signIn = async (email, password) => {
   return { data, error };
 };
 
+export const signInWithGoogle = async () => {
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: 'google',
+    options: {
+      redirectTo: `https://yedlhabnrjnesgbvebda.supabase.co/auth/v1/callback`,
+    },
+  });
+  return { data, error };
+};
+
 export const signUp = async (email, password, name) => {
   // First, sign up the user
   const { data, error } = await supabase.auth.signUp({
@@ -65,4 +75,33 @@ export const onAuthStateChange = (callback) => {
   return supabase.auth.onAuthStateChange((event, session) => {
     callback(session?.user || null);
   });
+};
+
+// Helper function to create or update user profile after OAuth sign in
+export const handleOAuthUserProfile = async (user) => {
+  if (!user) return;
+
+  const { data: existingUser } = await supabase
+    .from('users')
+    .select()
+    .eq('id', user.id)
+    .single();
+
+  if (!existingUser) {
+    const { error: profileError } = await supabase
+      .from('users')
+      .insert([
+        {
+          id: user.id,
+          email: user.email,
+          name: user.user_metadata?.full_name || user.email?.split('@')[0],
+          avatar_url: user.user_metadata?.avatar_url,
+          created_at: new Date()
+        }
+      ]);
+
+    if (profileError) {
+      console.error('Error creating user profile:', profileError);
+    }
+  }
 }; 

@@ -1,6 +1,8 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import styled from 'styled-components';
+import styled, { ThemeProvider } from 'styled-components';
+import theme from './theme';
+import GlobalStyles from './globalStyles';
 
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -8,6 +10,8 @@ import Home from './components/Home';
 import Chat from './components/Chat';
 import About from './components/About';
 import Login from './components/Auth/Login';
+import ResetPassword from './pages/ResetPassword';
+import PhoneVerification from './pages/PhoneVerification';
 import ProfilePage from './components/Profile/ProfilePage';
 import ConversationView from './components/Profile/ConversationView';
 import { AuthProvider, ProtectedRoute } from './context/AuthContext';
@@ -26,45 +30,50 @@ const Main = styled.main`
 
 function App() {
   return (
-    <AuthProvider>
-      <Router>
-        <AppContainer>
-          <Header />
-          <Main>
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/login" element={<Login />} />
-              <Route 
-                path="/chat" 
-                element={
-                  <ProtectedRoute>
-                    <Chat />
-                  </ProtectedRoute>
-                } 
-              />
-              <Route 
-                path="/profile" 
-                element={
-                  <ProtectedRoute>
-                    <ProfilePage />
-                  </ProtectedRoute>
-                } 
-              />
-              <Route 
-                path="/conversation/:conversationId" 
-                element={
-                  <ProtectedRoute>
-                    <ConversationView />
-                  </ProtectedRoute>
-                } 
-              />
-              <Route path="/about" element={<About />} />
-            </Routes>
-          </Main>
-          <Footer />
-        </AppContainer>
-      </Router>
-    </AuthProvider>
+    <ThemeProvider theme={theme}>
+      <GlobalStyles />
+      <AuthProvider>
+        <Router>
+          <AppContainer>
+            <Header />
+            <Main>
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/reset-password" element={<ResetPassword />} />
+                <Route path="/phone-verification" element={<PhoneVerification />} />
+                <Route 
+                  path="/chat" 
+                  element={
+                    <ProtectedRoute>
+                      <Chat />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/profile" 
+                  element={
+                    <ProtectedRoute>
+                      <ProfilePage />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/conversation/:conversationId" 
+                  element={
+                    <ProtectedRoute>
+                      <ConversationView />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route path="/about" element={<About />} />
+              </Routes>
+            </Main>
+            <Footer />
+          </AppContainer>
+        </Router>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
 

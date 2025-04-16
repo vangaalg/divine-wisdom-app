@@ -15,7 +15,8 @@ const {
 } = require('./supabase');
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+// Explicitly set port to 5002 to avoid conflicts
+const PORT = process.env.PORT || 5002;
 const HOST = process.env.HOST || '0.0.0.0'; // Listen on all network interfaces
 
 // Initialize OpenAI
@@ -198,50 +199,40 @@ app.post('/api/chat', async (req, res) => {
                   });
                 } catch (analyticsError) {
                   console.error('Error logging analytics event:', analyticsError);
-                  // Continue even if analytics fails
                 }
               }
             } catch (conversationError) {
               console.error('Error creating conversation in Supabase:', conversationError);
-              // Continue even if conversation creation fails
             }
           }
         } catch (userError) {
-          console.error('Error saving user to Supabase:', userError);
-          // Continue even if user creation fails
+          console.error('Error creating/updating user in Supabase:', userError);
+        }
         }
       } else {
-        // If anonymous session, try to get existing conversation
-        try {
-          const existingConversation = await getConversationBySessionId(sessionId);
-          if (existingConversation) {
-            conversations[sessionId].conversationId = existingConversation.id;
-            conversations[sessionId].userId = existingConversation.user_id;
-            conversations[sessionId].questionCount = existingConversation.questions_asked || 0;
-          } else {
-            // Create anonymous conversation
-            try {
-              const conversation = await createConversation(null, sessionId, detectedLanguage);
-              if (conversation) {
-                conversations[sessionId].conversationId = conversation.id;
-              }
-            } catch (anonymousConvError) {
-              console.error('Error creating anonymous conversation:', anonymousConvError);
-              // Continue even if conversation creation fails
-            }
+      // Update existing conversation's language if it changed
+      if (conversations[sessionId].language !== detectedLanguage) {
+        conversations[sessionId].language = detectedLanguage;
+        if (conversations[sessionId].conversationId) {
+          try {
+            await updateConversation(conversations[sessionId].conversationId, { 
+              language: detectedLanguage 
+            });
+          } catch (updateError) {
+            console.error('Error updating conversation language:', updateError);
           }
-        } catch (fetchConvError) {
-          console.error('Error retrieving conversation from Supabase:', fetchConvError);
-          // Continue even if conversation retrieval fails
         }
       }
     }
     
-    // Add user message to conversation
-    conversations[sessionId].messages.push({ role: "user", content: message });
-    console.log(`Added user message to conversation history. Current message count: ${conversations[sessionId].messages.length}`);
+    // Update question count
+    conversations[sessionId].questionCount += 1;
+    const questionCount = conversations[sessionId].questionCount;
     
-    // Save user message to Supabase if we have a conversation ID
+    // Add user message to conversation context
+    conversations[sessionId].messages.push({ role: "user", content: message });
+    
+    // Save user message to Supabase
     if (conversations[sessionId].conversationId) {
       try {
         await saveMessage(
@@ -250,100 +241,70 @@ app.post('/api/chat', async (req, res) => {
           true, // isUser = true
           detectedLanguage
         );
-        console.log(`Saved user message to database for conversation: ${conversations[sessionId].conversationId}`);
-      } catch (saveMessageError) {
-        console.error('Error saving user message to Supabase:', saveMessageError);
-        // Continue even if message saving fails
+      } catch (saveError) {
+        console.error('Error saving user message to Supabase:', saveError);
       }
     }
     
-    // Calculate if this is likely a new question
-    const isQuestion = message.trim().endsWith('?') || 
-                      message.toLowerCase().includes('should') ||
-                      message.toLowerCase().includes('will') || 
-                      message.toLowerCase().includes('can');
-    
-    // Increment question count if this appears to be a question
-    if (isQuestion && conversations[sessionId].questionCount < 3) {
-      conversations[sessionId].questionCount++;
-      console.log(`Incremented question count to: ${conversations[sessionId].questionCount}`);
-      
-      // Update the question count in Supabase
-      if (conversations[sessionId].conversationId) {
-        try {
-          await updateConversation(conversations[sessionId].conversationId, {
-            questions_asked: conversations[sessionId].questionCount,
-            language: detectedLanguage // Update detected language
-          });
-          console.log(`Updated question count in database to: ${conversations[sessionId].questionCount}`);
-        } catch (dbError) {
-          console.error('Error updating question count in Supabase:', dbError);
-        }
-      }
-    }
-    
-    // Add instruction about current question number
-    const questionCount = conversations[sessionId].questionCount;
-    let countInstruction = '';
-    
-    if (questionCount === 1) {
-      countInstruction = "This is their first question. End your response with a message in the SAME LANGUAGE as the user that means: 'You have asked 1 question. You may ask 2 more questions.'";
-    } else if (questionCount === 2) {
-      countInstruction = "This is their second question. End your response with a message in the SAME LANGUAGE as the user that means: 'You have asked 2 questions. You may ask 1 more question.'";
-    } else if (questionCount >= 3) {
-      countInstruction = "This is their third and final question. End your response with a message in the SAME LANGUAGE as the user that means: 'You have now asked all 3 questions. May Krishna's blessings be with you always.'";
-    }
-    
-    // Enhance system message with question tracking
-    const enhancedMessages = [
-      ...conversations[sessionId].messages,
-      { 
-        role: "system", 
-        content: `The user has asked ${questionCount} question(s) so far. ${countInstruction} Remember to provide a new Bhagavad Gita quote different from previous ones. IMPORTANT: Respond in the SAME LANGUAGE that the user is using.`
-      }
-    ];
-    
-    console.log(`Making OpenAI API call with ${enhancedMessages.length} messages`);
+    // Prepare response (with fallback if OpenAI fails)
+    let assistantMessage;
     
     try {
-      const response = await openai.chat.completions.create({
-        model: "gpt-4", // or any other appropriate model
-        messages: enhancedMessages,
-        max_tokens: 500,
-        temperature: 0.7,
+      // Try to get response from OpenAI
+      const openaiResponse = await openai.chat.completions.create({
+        model: "gpt-3.5-turbo",
+        messages: conversations[sessionId].messages,
+        temperature: 0.8,
+        max_tokens: 500
       });
       
-      const aiResponse = response.choices[0].message.content;
-      console.log(`Received OpenAI response of length: ${aiResponse.length}`);
+      assistantMessage = openaiResponse.choices[0].message.content;
+    } catch (openaiError) {
+      console.error('Error calling OpenAI API:', openaiError.message);
       
-      // Add AI response to conversation history
-      conversations[sessionId].messages.push({ role: "assistant", content: aiResponse });
+      // Fallback response based on language
+      let fallbackResponse;
+      if (detectedLanguage === 'hindi') {
+        fallbackResponse = `मैं क्षमा चाहता हूं, लेकिन मुझे अभी कृष्ण की दिव्य ज्ञान से कनेक्ट करने में समस्या हो रही है। कृपया बाद में पुनः प्रयास करें।\n\n"जब भी धर्म की हानि और अधर्म की वृद्धि होती है, तब मैं स्वयं प्रकट होता हूँ।" - श्रीमद्भगवद्गीता 4.7\n\nआपने ${questionCount} प्रश्न पूछा है। आप अभी ${3 - questionCount} और प्रश्न पूछ सकते हैं।`;
+      } else if (detectedLanguage === 'spanish') {
+        fallbackResponse = `Lo siento, pero estoy teniendo problemas para conectarme con la sabiduría divina de Krishna en este momento. Por favor, inténtalo de nuevo más tarde.\n\n"Cuando hay un declive en la rectitud y un aumento en la injusticia, yo me manifiesto." - Bhagavad Gita 4.7\n\nHas hecho ${questionCount} pregunta(s). Puedes hacer ${3 - questionCount} pregunta(s) más.`;
+      } else {
+        // Default to English
+        fallbackResponse = `I apologize, but I'm having trouble connecting with Krishna's divine wisdom at the moment. Please try again later.\n\n"Whenever there is a decline in righteousness and an increase in unrighteousness, I manifest myself." - Bhagavad Gita 4.7\n\nYou have asked ${questionCount} question(s). You may ask ${3 - questionCount} more question(s).`;
+      }
       
-      // Save the AI response to Supabase
+      assistantMessage = fallbackResponse;
+    }
+    
+    // Add assistant message to conversation context
+    conversations[sessionId].messages.push({ role: "assistant", content: assistantMessage });
+    
+    // Save assistant message to Supabase
       if (conversations[sessionId].conversationId) {
         try {
-          await saveMessage(
+        const savedMessage = await saveMessage(
             conversations[sessionId].conversationId,
-            aiResponse,
+          assistantMessage, 
             false, // isUser = false
             detectedLanguage
           );
-          console.log(`Saved AI response to database for conversation: ${conversations[sessionId].conversationId}`);
+        
+        // Extract and save Bhagavad Gita quote if present
+        if (savedMessage) {
+          // Simple regex to find quoted text that might be from Bhagavad Gita
+          const quoteMatch = assistantMessage.match(/[""]([^""]+)[""].*Bhagavad Gita/i) || 
+                            assistantMessage.match(/[""]([^""]+)[""].*भगवद् गीता/i);
           
-          // Log completed question for analytics
-          if (conversations[sessionId].userId && isQuestion) {
-            await logEvent('question_answered', 
-              conversations[sessionId].conversationId, 
-              conversations[sessionId].userId,
-              {
-                question_number: questionCount,
-                language: detectedLanguage
-              }
-            );
-            console.log(`Logged question_answered event for user: ${conversations[sessionId].userId}`);
+          if (quoteMatch && quoteMatch[1]) {
+            try {
+              await saveQuote(savedMessage.id, quoteMatch[1], detectedLanguage);
+            } catch (quoteError) {
+              console.error('Error saving quote to Supabase:', quoteError);
+            }
           }
-        } catch (dbError) {
-          console.error('Error saving AI response to Supabase:', dbError);
+        }
+      } catch (saveError) {
+        console.error('Error saving assistant message to Supabase:', saveError);
         }
       }
       
@@ -358,19 +319,10 @@ app.post('/api/chat', async (req, res) => {
       }
       
       return res.json({ 
-        message: aiResponse,
-        questionCount: questionCount,
-        conversationId: conversations[sessionId].conversationId || null
-      });
-    } catch (openaiError) {
-      console.error('OpenAI API Error:', openaiError.message);
-      // Return a specific error for OpenAI API issues
-      return res.status(503).json({ 
-        error: 'Divine wisdom service temporarily unavailable',
-        details: 'Could not connect to wisdom source',
-        openaiError: openaiError.message
-      });
-    }
+      message: assistantMessage,
+      questionCount: questionCount,
+      conversationId: conversations[sessionId].conversationId || null
+    });
   } catch (error) {
     console.error('Server Error in /api/chat:', error);
     return res.status(500).json({ 
