@@ -1,0 +1,14 @@
+{
+  "name": "divine-wisdom-app",
+  "version": "1.0.0",
+  "description": "Divine Wisdom spiritual AI chat application",
+  "scripts": {
+    "start": "concurrently \"npm run start:server\" \"npm run start:client\"",
+    "start:server": "cd server && npm run dev",
+    "start:client": "cd client && npm start",
+    "install:all": "npm install && cd server && npm install && cd ../client && npm install"
+  },
+  "dependencies": {
+    "concurrently": "^8.2.2"
+  }
+} 

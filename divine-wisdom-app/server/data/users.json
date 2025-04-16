@@ -1,0 +1,21 @@
+[
+  {
+    "id": "2e4cef68-c252-4642-b9d8-fef5a482d361",
+    "email": "test-user@example.com",
+    "name": "Test User",
+    "created_at": "2025-04-15T05:40:00.440Z",
+    "last_active": "2025-04-15T09:09:19.179Z"
+  },
+  {
+    "id": "d6130b9f-e2b2-494c-a601-f5c5996fcf0a",
+    "email": "Shera@gmail.com",
+    "created_at": "2025-04-15T11:25:05.743Z",
+    "last_active": "2025-04-15T11:25:05.743Z"
+  },
+  {
+    "id": "41eaa495-7d3a-4ba5-8347-8f48c6f800b9",
+    "email": "vangaalgaurav@gmail.com",
+    "created_at": "2025-04-15T11:51:30.980Z",
+    "last_active": "2025-04-15T11:51:30.980Z"
+  }
+]
